@@ -28,7 +28,7 @@ if __name__ == "__main__":
     ap.add_argument("--lr", type=float, default=1e-4)
     a = ap.parse_args()
     dev = "cuda" if torch.cuda.is_available() else "cpu"
-    cache = np.load(a.cache, allow_pickle=True)
+    cache = dict(np.load(a.cache, allow_pickle=True))
     tr, va, te = get_splits(cache["y"])
     mean, std = compute_norm(cache, tr)
     mk = lambda idx, sh: DataLoader(XrayDataset(cache, idx, mean, std), batch_size=a.bs, shuffle=sh)

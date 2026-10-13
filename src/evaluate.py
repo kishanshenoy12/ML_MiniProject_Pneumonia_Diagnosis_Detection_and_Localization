@@ -10,7 +10,7 @@ ap.add_argument("--cache", default="cache.npz"); ap.add_argument("--ckpt", defau
 ap.add_argument("--thr", type=float, default=0.45)
 a = ap.parse_args()
 dev = "cuda" if torch.cuda.is_available() else "cpu"
-cache = np.load(a.cache, allow_pickle=True)
+cache = dict(np.load(a.cache, allow_pickle=True))
 ck = torch.load(a.ckpt, map_location=dev, weights_only=False)
 model = PneumoCAMNet().to(dev); model.load_state_dict(ck["model"]); model.eval()
 _, _, te = get_splits(cache["y"])

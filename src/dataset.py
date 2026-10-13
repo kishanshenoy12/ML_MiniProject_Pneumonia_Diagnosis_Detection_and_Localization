@@ -51,19 +51,19 @@ def get_splits(y, seed=42):
 
 
 class XrayDataset(Dataset):
-    """Returns a 2-channel tensor: [normalised original, normalised lung-segmented]."""
+    """Precomputes the 2-channel normalised tensors once (fast per-epoch)."""
     def __init__(self, cache, idx, mean, std):
-        self.X, self.y, self.idx, self.mean, self.std = cache["X"], cache["y"], idx, mean, std
+        raw = cache["X"][idx]
+        seg = np.stack([r * lung_mask(r) for r in raw])
+        x = np.stack([(raw - mean[0]) / std[0], (seg - mean[1]) / std[1]], 1)
+        self.x = torch.from_numpy(x.astype(np.float32))
+        self.y, self.idx = cache["y"][idx], idx
 
     def __len__(self):
         return len(self.idx)
 
     def __getitem__(self, i):
-        j = self.idx[i]
-        raw = self.X[j]
-        seg = raw * lung_mask(raw)
-        x = np.stack([(raw - self.mean[0]) / self.std[0], (seg - self.mean[1]) / self.std[1]])
-        return torch.from_numpy(x.astype(np.float32)), int(self.y[j]), j
+        return self.x[i], int(self.y[i]), int(self.idx[i])
 
 
 def compute_norm(cache, train_idx):

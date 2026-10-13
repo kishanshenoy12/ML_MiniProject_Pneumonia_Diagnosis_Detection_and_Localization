@@ -7,7 +7,7 @@ from sklearn.svm import SVC
 from dataset import get_splits
 
 ap = argparse.ArgumentParser(); ap.add_argument("--cache", default="cache.npz"); a = ap.parse_args()
-c = np.load(a.cache, allow_pickle=True)
+c = dict(np.load(a.cache, allow_pickle=True))
 X = np.stack([cv2.resize(i, (32, 32), interpolation=cv2.INTER_AREA).ravel() for i in c["X"]])
 y = c["y"]; tr, va, te = get_splits(y)
 sc = StandardScaler().fit(X[tr]); Xs = sc.transform(X)

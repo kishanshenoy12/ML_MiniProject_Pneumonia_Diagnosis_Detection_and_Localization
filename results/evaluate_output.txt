@@ -1,0 +1,5 @@
+Test accuracy: 0.8924008069939475
+Confusion matrix [[TN FP],[FN TP]]:
+ [[811  75]
+ [ 85 516]]
+Mean IoU over 516 localised images (thr=0.45): 0.2167
