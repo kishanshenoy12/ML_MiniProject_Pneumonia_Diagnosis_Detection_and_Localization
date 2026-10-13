@@ -40,3 +40,22 @@ python demo.py --image ../data/stage_2_train_images/<id>.dcm --out result.png
 - Train a U-Net lung segmenter (Montgomery / Shenzhen lung-mask datasets).
 - Tune CAM threshold on the validation set (try 0.2–0.7).
 - Use 256x256 inputs; try transfer learning (ImageNet / CheXNet weights).
+
+
+## Results
+
+**Dataset (after dropping "Not Normal" class):** 14,863 images (6,012 pneumonia, 8,851 normal), split 70/20/10 train/val/test (1,487 test images).
+
+| Model | Train acc | Test acc |
+|---|---|---|
+| Logistic Regression | 87.88% | 83.32% |
+| SVM | 91.79% | 88.70% |
+| Random Forest | 100.00% | 87.96% |
+| **CNN (ours)** | - | **89.24%** |
+
+**CNN confusion matrix** (test set, rows = actual, columns = predicted): `[[811, 75], [85, 516]]`
+Sensitivity (pneumonia caught): 85.9%. Specificity (normal caught): 91.5%.
+
+**Localization (CAM, threshold 0.45):** mean IoU = **0.2167** over 516 correctly detected pneumonia images. (The paper reports 0.1508 for CNN+CAM; our IoU is computed between the union of predicted boxes and the union of ground-truth boxes, so the numbers are not strictly comparable.)
+
+Sample CAM outputs are in the `results/` folder (`demo*.png`); raw outputs are in `results/evaluate_output.txt` and `results/baselines.txt`.
